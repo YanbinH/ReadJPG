@@ -16,7 +16,7 @@ int main()
     GdiplusStartup(&gdiplustoken, &gdiplusstartupinput, nullptr);
 
     wstring infilename(L"1.jpg");
-    string outfilename("color.txt");
+    string outfilename("color.h");
     //读图片
     Bitmap* bmp = new Bitmap(infilename.c_str());
     UINT height = bmp->GetHeight();
@@ -25,15 +25,23 @@ int main()
 
     Color color;
     ofstream fout(outfilename.c_str());
+    fout << "#ifndef _COLOR_H_" << endl;
+    fout << "#define _COLOR_H_" << endl;
+    fout << "uint8_t imgRGB888[] = {" << endl;
 
     for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
         {
             bmp->GetPixel(x, y, &color);
-            fout  << hex << (int)color.GetRed() << ","
-                  << (int)color.GetGreen() << ","
-                  << (int)color.GetBlue() << ",";
+            fout << "0x";
+            fout << hex << (int)color.GetBlue() << ",";
+            fout << "0x";
+            fout << hex << (int)color.GetGreen() << ",";
+            fout << "0x";
+            fout << hex << (int)color.GetRed() << ",";
         }
+    fout << "};" << endl;
+    fout << "#endif" << endl;
 
     fout.close();
 
